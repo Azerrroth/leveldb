@@ -15,31 +15,32 @@ int main(void) {
   options.create_if_missing = true;
 
   // open
-  leveldb::Status status = leveldb::DB::Open(options, "/tmp/testdb", &redb);
+  leveldb::Status status =
+      leveldb::DB::Open(options, "/tmp/testdb", (leveldb::DB**)&redb);
   assert(status.ok());
-
+  redb->OpenFile("real_value");
   string key = "keytest";
   string value = "this is the value of keytest";
 
   // write
-  status = db->Put(leveldb::WriteOptions(), key, value);
+  status = redb->MyPut(leveldb::WriteOptions(), key, value);
   assert(status.ok());
 
   // read
-  status = db->Get(leveldb::ReadOptions(), key, &value);
+  status = redb->Get(leveldb::ReadOptions(), key, &value);
   assert(status.ok());
 
   cout << "[Key] " << key << " [Value] " << value << endl;
 
   // delete
-  status = db->Delete(leveldb::WriteOptions(), key);
+  status = redb->Delete(leveldb::WriteOptions(), key);
   assert(status.ok());
 
-  status = db->Get(leveldb::ReadOptions(), key, &value);
+  status = redb->Get(leveldb::ReadOptions(), key, &value);
   assert(!status.ok());
 
   // close
-  delete db;
+  delete redb;
 
   return 0;
 }
