@@ -18,7 +18,8 @@ int main(void) {
   leveldb::Status status =
       leveldb::DB::Open(options, "/tmp/testdb", (leveldb::DB**)&redb);
   assert(status.ok());
-  redb->OpenFile("real_value");
+
+  redb->OpenFile("real.value");
   string key = "keytest";
   string value = "this is the value of keytest";
 
@@ -27,7 +28,10 @@ int main(void) {
   assert(status.ok());
 
   // read
-  status = redb->Get(leveldb::ReadOptions(), key, &value);
+  // status = redb->Get(leveldb::ReadOptions(), key, &value);
+  // assert(status.ok());
+
+  status = redb->MyGet(leveldb::ReadOptions(), key, &value);
   assert(status.ok());
 
   cout << "[Key] " << key << " [Value] " << value << endl;
@@ -40,7 +44,10 @@ int main(void) {
   assert(!status.ok());
 
   // close
-  delete redb;
+  std::cout << "close" << std::endl;
+  redb->CloseFile();
+  // delete redb;
+  std::cout << "close Finish" << std::endl;
 
   return 0;
 }
